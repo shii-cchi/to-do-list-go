@@ -1,5 +1,6 @@
 package dto
 
+// TodoResponseDto represents the response structure.
 type TodoResponseDto struct {
 	ID          int32  `json:"id"`
 	Title       string `json:"title"`

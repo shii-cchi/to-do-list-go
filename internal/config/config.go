@@ -10,6 +10,7 @@ const (
 	errUndefinedEnvParam = "parameter is undefined"
 )
 
+// Config is a struct that holds the configuration settings for the application.
 type Config struct {
 	Port       string
 	DbUser     string
@@ -19,6 +20,7 @@ type Config struct {
 	DbName     string
 }
 
+// LoadConfig reads the environment variables from the .env file and loads them into a Config struct.
 func LoadConfig() (*Config, error) {
 	if err := godotenv.Load(".env"); err != nil {
 		return nil, err

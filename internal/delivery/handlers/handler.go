@@ -7,18 +7,21 @@ import (
 	"to-do-list-go/internal/service"
 )
 
+// Handler manages the endpoints, including the TodoHandler for handling todos-related requests.
 type Handler struct {
 	TodoHandler *TodoHandler
 }
 
+// NewHandler creates a new Handler.
 func NewHandler(service *service.Service, validator *validator.Validate) *Handler {
-	todoHandler := newTodoHandler(service.Todo, validator)
+	todoHandler := newTodoHandler(service.Todos, validator)
 
 	return &Handler{
 		TodoHandler: todoHandler,
 	}
 }
 
+// RegisterRoutes manages route registration for todos endpoints with associated middlewares.
 func (h Handler) RegisterRoutes(r *chi.Mux) {
 	r.With(middleware.CheckTodoInput(h.TodoHandler.validator)).Post("/tasks", h.TodoHandler.createTodoHandler)
 	r.Get("/tasks", h.TodoHandler.getTodosHandler)

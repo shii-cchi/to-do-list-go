@@ -11,9 +11,10 @@ import (
 )
 
 const (
-	ErrTodoNotFound = "todo with this id not found"
+	errTodoNotFound = "todo with this id not found"
 )
 
+// TodoService handles todos-related business logic.
 type TodoService struct {
 	repo database.Repository
 }
@@ -24,6 +25,7 @@ func newTodoService(repo database.Repository) *TodoService {
 	}
 }
 
+// CreateTodo creates a newTodo.
 func (t TodoService) CreateTodo(todoInput dto.TodoInputDto) (dto.TodoResponseDto, error) {
 	newTodo, err := t.repo.CreateTodo(context.Background(), database.CreateTodoParams{
 		Title:       todoInput.Title,
@@ -44,6 +46,7 @@ func (t TodoService) CreateTodo(todoInput dto.TodoInputDto) (dto.TodoResponseDto
 	}, nil
 }
 
+// GetTodos returns all todos.
 func (t TodoService) GetTodos() ([]dto.TodoResponseDto, error) {
 	todos, err := t.repo.GetTodos(context.Background())
 	if err != nil {
@@ -53,11 +56,12 @@ func (t TodoService) GetTodos() ([]dto.TodoResponseDto, error) {
 	return t.makeTodosResponseDto(todos), nil
 }
 
+// GetTodo returns a singleTodo by ID.
 func (t TodoService) GetTodo(todoID int) (dto.TodoResponseDto, error) {
 	todo, err := t.repo.GetTodo(context.Background(), int32(todoID))
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return dto.TodoResponseDto{}, fmt.Errorf(ErrTodoNotFound+": %s\n", err)
+			return dto.TodoResponseDto{}, fmt.Errorf(errTodoNotFound+": %s\n", err)
 		}
 
 		return dto.TodoResponseDto{}, err
@@ -73,6 +77,7 @@ func (t TodoService) GetTodo(todoID int) (dto.TodoResponseDto, error) {
 	}, nil
 }
 
+// UpdateTodo updates an existingTodo by ID.
 func (t TodoService) UpdateTodo(todoID int, todoInput dto.TodoInputDto) (dto.TodoResponseDto, error) {
 	updatedTodo, err := t.repo.UpdateTodo(context.Background(), database.UpdateTodoParams{
 		ID:          int32(todoID),
@@ -82,7 +87,7 @@ func (t TodoService) UpdateTodo(todoID int, todoInput dto.TodoInputDto) (dto.Tod
 	})
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return dto.TodoResponseDto{}, fmt.Errorf(ErrTodoNotFound+": %s\n", err)
+			return dto.TodoResponseDto{}, fmt.Errorf(errTodoNotFound+": %s\n", err)
 		}
 
 		return dto.TodoResponseDto{}, err
@@ -98,11 +103,12 @@ func (t TodoService) UpdateTodo(todoID int, todoInput dto.TodoInputDto) (dto.Tod
 	}, nil
 }
 
+// DeleteTodo deletes a existingTodo by ID.
 func (t TodoService) DeleteTodo(todoID int) error {
 	_, err := t.repo.DeleteTodo(context.Background(), int32(todoID))
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return fmt.Errorf(ErrTodoNotFound+": %s\n", err)
+			return fmt.Errorf(errTodoNotFound+": %s\n", err)
 		}
 
 		return err

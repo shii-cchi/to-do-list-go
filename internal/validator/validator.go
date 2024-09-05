@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+// InitValidator initializes and returns a validator instance with custom RFC3339 validation.
 func InitValidator() (*validator.Validate, error) {
 	v := validator.New()
 	if err := v.RegisterValidation("rfc3339", validateRFC3339); err != nil {

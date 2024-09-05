@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/go-chi/chi"
+	// Import the PostgreSQL driver.
 	_ "github.com/lib/pq"
 	"log"
 	"net/http"
@@ -24,6 +25,7 @@ const (
 	serverStart            = "server starting on port"
 )
 
+// Run initializes whole application.
 func Run() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 

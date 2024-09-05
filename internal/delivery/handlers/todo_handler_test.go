@@ -16,8 +16,8 @@ import (
 	"time"
 	"to-do-list-go/internal/database"
 	mock_repo "to-do-list-go/internal/database/mocks"
+	"to-do-list-go/internal/delivery"
 	"to-do-list-go/internal/delivery/dto"
-	"to-do-list-go/internal/delivery/middleware"
 	"to-do-list-go/internal/service"
 	"to-do-list-go/internal/validator"
 )
@@ -83,7 +83,7 @@ func TestCreateTodoHandler(t *testing.T) {
 			expectedBody: struct {
 				Error string `json:"error"`
 			}{
-				Error: middleware.ErrInvalidInput,
+				Error: delivery.ErrInvalidInput,
 			},
 			mockBehavior: func(ctx context.Context, repo *mock_repo.MockRepository) {},
 		},
@@ -99,7 +99,7 @@ func TestCreateTodoHandler(t *testing.T) {
 			expectedBody: struct {
 				Error string `json:"error"`
 			}{
-				Error: middleware.ErrInvalidInput,
+				Error: delivery.ErrInvalidInput,
 			},
 			mockBehavior: func(ctx context.Context, repo *mock_repo.MockRepository) {},
 		},
@@ -116,7 +116,7 @@ func TestCreateTodoHandler(t *testing.T) {
 			expectedBody: struct {
 				Error string `json:"error"`
 			}{
-				Error: errCreatingTodo,
+				Error: delivery.ErrCreatingTodo,
 			},
 			mockBehavior: func(ctx context.Context, repo *mock_repo.MockRepository) {
 				repo.EXPECT().CreateTodo(ctx, database.CreateTodoParams{
@@ -168,7 +168,7 @@ func TestCreateTodoHandler(t *testing.T) {
 			expectedBody: struct {
 				Error string `json:"error"`
 			}{
-				Error: errGettingTodos,
+				Error: delivery.ErrGettingTodos,
 			},
 			mockBehavior: func(ctx context.Context, repo *mock_repo.MockRepository) {
 				repo.EXPECT().GetTodos(ctx).Return(nil, errors.New("some db error")).Times(1)
@@ -213,7 +213,7 @@ func TestCreateTodoHandler(t *testing.T) {
 			expectedBody: struct {
 				Error string `json:"error"`
 			}{
-				Error: middleware.ErrInvalidTodoID,
+				Error: delivery.ErrInvalidTodoID,
 			},
 			mockBehavior: func(ctx context.Context, repo *mock_repo.MockRepository) {},
 		},
@@ -226,7 +226,7 @@ func TestCreateTodoHandler(t *testing.T) {
 			expectedBody: struct {
 				Error string `json:"error"`
 			}{
-				Error: middleware.ErrInvalidTodoID,
+				Error: delivery.ErrInvalidTodoID,
 			},
 			mockBehavior: func(ctx context.Context, repo *mock_repo.MockRepository) {},
 		},
@@ -239,7 +239,7 @@ func TestCreateTodoHandler(t *testing.T) {
 			expectedBody: struct {
 				Error string `json:"error"`
 			}{
-				Error: errTodoNotFound,
+				Error: delivery.ErrTodoNotFound,
 			},
 			mockBehavior: func(ctx context.Context, repo *mock_repo.MockRepository) {
 				todoID := int32(11)
@@ -255,7 +255,7 @@ func TestCreateTodoHandler(t *testing.T) {
 			expectedBody: struct {
 				Error string `json:"error"`
 			}{
-				Error: errGettingTodo,
+				Error: delivery.ErrGettingTodo,
 			},
 			mockBehavior: func(ctx context.Context, repo *mock_repo.MockRepository) {
 				todoID := int32(1)
@@ -314,7 +314,7 @@ func TestCreateTodoHandler(t *testing.T) {
 			expectedBody: struct {
 				Error string `json:"error"`
 			}{
-				Error: middleware.ErrInvalidTodoID,
+				Error: delivery.ErrInvalidTodoID,
 			},
 			mockBehavior: func(ctx context.Context, repo *mock_repo.MockRepository) {},
 		},
@@ -331,7 +331,7 @@ func TestCreateTodoHandler(t *testing.T) {
 			expectedBody: struct {
 				Error string `json:"error"`
 			}{
-				Error: middleware.ErrInvalidTodoID,
+				Error: delivery.ErrInvalidTodoID,
 			},
 			mockBehavior: func(ctx context.Context, repo *mock_repo.MockRepository) {},
 		},
@@ -348,7 +348,7 @@ func TestCreateTodoHandler(t *testing.T) {
 			expectedBody: struct {
 				Error string `json:"error"`
 			}{
-				Error: middleware.ErrInvalidInput,
+				Error: delivery.ErrInvalidInput,
 			},
 			mockBehavior: func(ctx context.Context, repo *mock_repo.MockRepository) {},
 		},
@@ -364,7 +364,7 @@ func TestCreateTodoHandler(t *testing.T) {
 			expectedBody: struct {
 				Error string `json:"error"`
 			}{
-				Error: middleware.ErrInvalidInput,
+				Error: delivery.ErrInvalidInput,
 			},
 			mockBehavior: func(ctx context.Context, repo *mock_repo.MockRepository) {},
 		},
@@ -381,7 +381,7 @@ func TestCreateTodoHandler(t *testing.T) {
 			expectedBody: struct {
 				Error string `json:"error"`
 			}{
-				Error: errTodoNotFound,
+				Error: delivery.ErrTodoNotFound,
 			},
 			mockBehavior: func(ctx context.Context, repo *mock_repo.MockRepository) {
 				todoID := int32(11)
@@ -406,7 +406,7 @@ func TestCreateTodoHandler(t *testing.T) {
 			expectedBody: struct {
 				Error string `json:"error"`
 			}{
-				Error: errUpdatingTodo,
+				Error: delivery.ErrUpdatingTodo,
 			},
 			mockBehavior: func(ctx context.Context, repo *mock_repo.MockRepository) {
 				todoID := int32(1)
@@ -441,7 +441,7 @@ func TestCreateTodoHandler(t *testing.T) {
 			expectedBody: struct {
 				Error string `json:"error"`
 			}{
-				Error: middleware.ErrInvalidTodoID,
+				Error: delivery.ErrInvalidTodoID,
 			},
 			mockBehavior: func(ctx context.Context, repo *mock_repo.MockRepository) {},
 		},
@@ -454,7 +454,7 @@ func TestCreateTodoHandler(t *testing.T) {
 			expectedBody: struct {
 				Error string `json:"error"`
 			}{
-				Error: middleware.ErrInvalidTodoID,
+				Error: delivery.ErrInvalidTodoID,
 			},
 			mockBehavior: func(ctx context.Context, repo *mock_repo.MockRepository) {},
 		},
@@ -467,7 +467,7 @@ func TestCreateTodoHandler(t *testing.T) {
 			expectedBody: struct {
 				Error string `json:"error"`
 			}{
-				Error: errTodoNotFound,
+				Error: delivery.ErrTodoNotFound,
 			},
 			mockBehavior: func(ctx context.Context, repo *mock_repo.MockRepository) {
 				todoID := int32(11)
@@ -483,7 +483,7 @@ func TestCreateTodoHandler(t *testing.T) {
 			expectedBody: struct {
 				Error string `json:"error"`
 			}{
-				Error: errDeletingTodo,
+				Error: delivery.ErrDeletingTodo,
 			},
 			mockBehavior: func(ctx context.Context, repo *mock_repo.MockRepository) {
 				todoID := int32(1)

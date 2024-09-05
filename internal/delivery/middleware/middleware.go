@@ -12,49 +12,46 @@ import (
 	"to-do-list-go/internal/delivery/dto"
 )
 
-const (
-	ErrInvalidInput  = "invalid todo input body(fields title, description and due_date are required and can't be empty, due_date field must be a string in RFC3339 format)"
-	ErrInvalidTodoID = "invalid todo id"
-)
-
+// CheckTodoInput validates the request body against the TodoInputDto schema and adds it to the request context.
 func CheckTodoInput(validate *validator.Validate) func(next http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			todoInput := dto.TodoInputDto{}
 			if err := json.NewDecoder(r.Body).Decode(&todoInput); err != nil {
-				log.Printf(ErrInvalidInput+": %s\n", err)
-				delivery.RespondWithError(w, http.StatusBadRequest, ErrInvalidInput)
+				log.Printf(delivery.ErrInvalidInput+": %s\n", err)
+				delivery.RespondWithError(w, http.StatusBadRequest, delivery.ErrInvalidInput)
 				return
 			}
 
 			if err := validate.Struct(&todoInput); err != nil {
-				log.Printf(ErrInvalidInput+": %s\n", err)
-				delivery.RespondWithError(w, http.StatusBadRequest, ErrInvalidInput)
+				log.Printf(delivery.ErrInvalidInput+": %s\n", err)
+				delivery.RespondWithError(w, http.StatusBadRequest, delivery.ErrInvalidInput)
 				return
 			}
 
-			ctx := context.WithValue(r.Context(), "todoInput", todoInput)
+			ctx := context.WithValue(r.Context(), delivery.TodoInputKey, todoInput)
 			next.ServeHTTP(w, r.WithContext(ctx))
 		})
 	}
 }
 
+// GetTodoID extracts the todos ID from the request URL and adds it to the request context.
 func GetTodoID(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		todoIDStr := chi.URLParam(r, "id")
 		todoID, err := strconv.Atoi(todoIDStr)
 		if err != nil || todoID <= 0 {
 			if err != nil {
-				log.Printf(ErrInvalidTodoID+": %s\n", err)
+				log.Printf(delivery.ErrInvalidTodoID+": %s\n", err)
 			} else {
-				log.Printf(ErrInvalidTodoID+": %d\n", todoID)
+				log.Printf(delivery.ErrInvalidTodoID+": %d\n", todoID)
 			}
 
-			delivery.RespondWithError(w, http.StatusBadRequest, ErrInvalidTodoID)
+			delivery.RespondWithError(w, http.StatusBadRequest, delivery.ErrInvalidTodoID)
 			return
 		}
 
-		ctx := context.WithValue(r.Context(), "todoID", todoID)
+		ctx := context.WithValue(r.Context(), delivery.TodoIDKey, todoID)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }

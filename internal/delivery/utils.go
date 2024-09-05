@@ -6,6 +6,7 @@ import (
 	"net/http"
 )
 
+// RespondWithJSON sends a JSON response with the given HTTP status code and payload to the client.
 func RespondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 	data, err := json.Marshal(payload)
 
@@ -20,6 +21,7 @@ func RespondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 	w.Write(data)
 }
 
+// RespondWithError sends a JSON response with an error message and status code to the client.
 func RespondWithError(w http.ResponseWriter, code int, msg string) {
 	type errResponse struct {
 		Error string `json:"error"`

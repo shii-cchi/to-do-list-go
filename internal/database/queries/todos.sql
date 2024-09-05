@@ -12,7 +12,7 @@ WHERE id = $1;
 
 -- name: UpdateTodo :one
 UPDATE todos
-SET title = $2, description = $3, due_date = $4
+SET title = $2, description = $3, due_date = $4, updated_at = $5
 WHERE id = $1
 RETURNING *;
 

@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 	"to-do-list-go/internal/delivery"
 	"to-do-list-go/internal/delivery/dto"
 	"to-do-list-go/internal/domain"
@@ -41,6 +42,7 @@ func (h TodoHandler) createTodoHandler(w http.ResponseWriter, r *http.Request) {
 
 	todo, err := h.todoService.CreateTodo(todoInput)
 	if err != nil {
+		log.Printf(domain.ErrCreatingTodo+": %s\n", err)
 		delivery.RespondWithError(w, http.StatusInternalServerError, domain.ErrCreatingTodo)
 		return
 	}
@@ -51,6 +53,7 @@ func (h TodoHandler) createTodoHandler(w http.ResponseWriter, r *http.Request) {
 func (h TodoHandler) getTodosHandler(w http.ResponseWriter, r *http.Request) {
 	todos, err := h.todoService.GetTodos()
 	if err != nil {
+		log.Printf(domain.ErrGettingTodos+": %s\n", err)
 		delivery.RespondWithError(w, http.StatusInternalServerError, domain.ErrGettingTodos)
 		return
 	}
@@ -62,17 +65,20 @@ func (h TodoHandler) getTodoHandler(w http.ResponseWriter, r *http.Request) {
 	todoIDStr := chi.URLParam(r, "id")
 	todoID, err := strconv.Atoi(todoIDStr)
 	if err != nil || todoID <= 0 {
+		log.Printf(domain.ErrInvalidTodoID+":%s\n", err)
 		delivery.RespondWithError(w, http.StatusBadRequest, domain.ErrInvalidTodoID)
 		return
 	}
 
 	todo, err := h.todoService.GetTodo(todoID)
 	if err != nil {
-		if err.Error() == domain.ErrTodoNotFound {
+		if strings.HasPrefix(err.Error(), domain.ErrTodoNotFound) {
+			log.Println(err)
 			delivery.RespondWithError(w, http.StatusNotFound, domain.ErrTodoNotFound)
 			return
 		}
 
+		log.Printf(domain.ErrGettingTodo+": %s\n", err)
 		delivery.RespondWithError(w, http.StatusInternalServerError, domain.ErrGettingTodo)
 		return
 	}
@@ -84,6 +90,7 @@ func (h TodoHandler) updateTodoHandler(w http.ResponseWriter, r *http.Request) {
 	todoIDStr := chi.URLParam(r, "id")
 	todoID, err := strconv.Atoi(todoIDStr)
 	if err != nil || todoID <= 0 {
+		log.Printf(domain.ErrInvalidTodoID+":%s\n", err)
 		delivery.RespondWithError(w, http.StatusBadRequest, domain.ErrInvalidTodoID)
 		return
 	}
@@ -103,11 +110,13 @@ func (h TodoHandler) updateTodoHandler(w http.ResponseWriter, r *http.Request) {
 
 	updatedTodo, err := h.todoService.UpdateTodo(todoID, todoInput)
 	if err != nil {
-		if err.Error() == domain.ErrTodoNotFound {
+		if strings.HasPrefix(err.Error(), domain.ErrTodoNotFound) {
+			log.Println(err)
 			delivery.RespondWithError(w, http.StatusNotFound, domain.ErrTodoNotFound)
 			return
 		}
 
+		log.Printf(domain.ErrUpdatingTodo+": %s\n", err)
 		delivery.RespondWithError(w, http.StatusInternalServerError, domain.ErrUpdatingTodo)
 		return
 	}
@@ -119,16 +128,19 @@ func (h TodoHandler) deleteTodoHandler(w http.ResponseWriter, r *http.Request) {
 	todoIDStr := chi.URLParam(r, "id")
 	todoID, err := strconv.Atoi(todoIDStr)
 	if err != nil || todoID <= 0 {
+		log.Printf(domain.ErrInvalidTodoID+":%s\n", err)
 		delivery.RespondWithError(w, http.StatusBadRequest, domain.ErrInvalidTodoID)
 		return
 	}
 
 	if err := h.todoService.DeleteTodo(todoID); err != nil {
-		if err.Error() == domain.ErrTodoNotFound {
+		if strings.HasPrefix(err.Error(), domain.ErrTodoNotFound) {
+			log.Println(err)
 			delivery.RespondWithError(w, http.StatusNotFound, domain.ErrTodoNotFound)
 			return
 		}
 
+		log.Printf(domain.ErrDeletingTodo+": %s\n", err)
 		delivery.RespondWithError(w, http.StatusInternalServerError, domain.ErrDeletingTodo)
 		return
 	}

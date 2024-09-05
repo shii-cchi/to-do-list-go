@@ -118,7 +118,7 @@ func (q *Queries) GetTodos(ctx context.Context) ([]Todo, error) {
 
 const updateTodo = `-- name: UpdateTodo :one
 UPDATE todos
-SET title = $2, description = $3, due_date = $4
+SET title = $2, description = $3, due_date = $4, updated_at = $5
 WHERE id = $1
 RETURNING id, title, description, due_date, created_at, updated_at
 `
@@ -128,6 +128,7 @@ type UpdateTodoParams struct {
 	Title       string
 	Description string
 	DueDate     string
+	UpdatedAt   string
 }
 
 func (q *Queries) UpdateTodo(ctx context.Context, arg UpdateTodoParams) (Todo, error) {
@@ -136,6 +137,7 @@ func (q *Queries) UpdateTodo(ctx context.Context, arg UpdateTodoParams) (Todo, e
 		arg.Title,
 		arg.Description,
 		arg.DueDate,
+		arg.UpdatedAt,
 	)
 	var i Todo
 	err := row.Scan(

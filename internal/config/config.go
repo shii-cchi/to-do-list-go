@@ -60,5 +60,12 @@ func LoadConfig() (*Config, error) {
 		return nil, errors.New("DB_NAME " + ErrUndefinedEnvParam)
 	}
 
-	return &Config{}, nil
+	return &Config{
+		Port:       port,
+		DbUser:     dbUser,
+		DbPassword: dbPassword,
+		DbHost:     dbHost,
+		DbPort:     dbPort,
+		DbName:     dbName,
+	}, nil
 }

@@ -1,6 +1,6 @@
 -- name: CreateTodo :one
-INSERT INTO todos (title, description, due_date, created_at, updated_at)
-VALUES ($1, $2, $3, $4, $5)
+INSERT INTO todos (title, description, due_date)
+VALUES ($1, $2, $3)
 RETURNING *;
 
 -- name: GetTodos :many
@@ -12,7 +12,7 @@ WHERE id = $1;
 
 -- name: UpdateTodo :one
 UPDATE todos
-SET title = $2, description = $3, due_date = $4, updated_at = $5
+SET title = $2, description = $3, due_date = $4, updated_at = NOW()
 WHERE id = $1
 RETURNING *;
 

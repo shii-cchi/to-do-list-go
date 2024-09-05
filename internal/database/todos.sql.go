@@ -10,8 +10,8 @@ import (
 )
 
 const createTodo = `-- name: CreateTodo :one
-INSERT INTO todos (title, description, due_date, created_at, updated_at)
-VALUES ($1, $2, $3, $4, $5)
+INSERT INTO todos (title, description, due_date)
+VALUES ($1, $2, $3)
 RETURNING id, title, description, due_date, created_at, updated_at
 `
 
@@ -19,18 +19,10 @@ type CreateTodoParams struct {
 	Title       string
 	Description string
 	DueDate     string
-	CreatedAt   string
-	UpdatedAt   string
 }
 
 func (q *Queries) CreateTodo(ctx context.Context, arg CreateTodoParams) (Todo, error) {
-	row := q.db.QueryRowContext(ctx, createTodo,
-		arg.Title,
-		arg.Description,
-		arg.DueDate,
-		arg.CreatedAt,
-		arg.UpdatedAt,
-	)
+	row := q.db.QueryRowContext(ctx, createTodo, arg.Title, arg.Description, arg.DueDate)
 	var i Todo
 	err := row.Scan(
 		&i.ID,
@@ -118,7 +110,7 @@ func (q *Queries) GetTodos(ctx context.Context) ([]Todo, error) {
 
 const updateTodo = `-- name: UpdateTodo :one
 UPDATE todos
-SET title = $2, description = $3, due_date = $4, updated_at = $5
+SET title = $2, description = $3, due_date = $4, updated_at = NOW()
 WHERE id = $1
 RETURNING id, title, description, due_date, created_at, updated_at
 `
@@ -128,7 +120,6 @@ type UpdateTodoParams struct {
 	Title       string
 	Description string
 	DueDate     string
-	UpdatedAt   string
 }
 
 func (q *Queries) UpdateTodo(ctx context.Context, arg UpdateTodoParams) (Todo, error) {
@@ -137,7 +128,6 @@ func (q *Queries) UpdateTodo(ctx context.Context, arg UpdateTodoParams) (Todo, e
 		arg.Title,
 		arg.Description,
 		arg.DueDate,
-		arg.UpdatedAt,
 	)
 	var i Todo
 	err := row.Scan(

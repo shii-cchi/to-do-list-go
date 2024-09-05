@@ -5,8 +5,8 @@ CREATE TABLE todos (
     title TEXT NOT NULL,
     description TEXT NOT NULL,
     due_date TEXT NOT NULL,
-    created_at TEXT NOT NULL,
-    updated_at TEXT NOT NULL
+    created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+    updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
 );
 -- +goose StatementEnd
 

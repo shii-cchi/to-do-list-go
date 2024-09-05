@@ -4,11 +4,15 @@
 
 package database
 
+import (
+	"time"
+)
+
 type Todo struct {
 	ID          int32
 	Title       string
 	Description string
 	DueDate     string
-	CreatedAt   string
-	UpdatedAt   string
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }

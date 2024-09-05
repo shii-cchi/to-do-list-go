@@ -25,14 +25,10 @@ func newTodoService(repo database.Repository) *TodoService {
 }
 
 func (t TodoService) CreateTodo(todoInput dto.TodoInputDto) (dto.TodoResponseDto, error) {
-	timeRFC3339 := time.Now().Format(time.RFC3339)
-
 	newTodo, err := t.repo.CreateTodo(context.Background(), database.CreateTodoParams{
 		Title:       todoInput.Title,
 		Description: todoInput.Description,
 		DueDate:     todoInput.DueDate,
-		CreatedAt:   timeRFC3339,
-		UpdatedAt:   timeRFC3339,
 	})
 	if err != nil {
 		return dto.TodoResponseDto{}, err
@@ -43,8 +39,8 @@ func (t TodoService) CreateTodo(todoInput dto.TodoInputDto) (dto.TodoResponseDto
 		Title:       newTodo.Title,
 		Description: newTodo.Description,
 		DueDate:     newTodo.DueDate,
-		CreatedAt:   newTodo.CreatedAt,
-		UpdatedAt:   newTodo.UpdatedAt,
+		CreatedAt:   newTodo.CreatedAt.Format(time.RFC3339),
+		UpdatedAt:   newTodo.UpdatedAt.Format(time.RFC3339),
 	}, nil
 }
 
@@ -72,8 +68,8 @@ func (t TodoService) GetTodo(todoID int) (dto.TodoResponseDto, error) {
 		Title:       todo.Title,
 		Description: todo.Description,
 		DueDate:     todo.DueDate,
-		CreatedAt:   todo.CreatedAt,
-		UpdatedAt:   todo.UpdatedAt,
+		CreatedAt:   todo.CreatedAt.Format(time.RFC3339),
+		UpdatedAt:   todo.UpdatedAt.Format(time.RFC3339),
 	}, nil
 }
 
@@ -83,7 +79,6 @@ func (t TodoService) UpdateTodo(todoID int, todoInput dto.TodoInputDto) (dto.Tod
 		Title:       todoInput.Title,
 		Description: todoInput.Description,
 		DueDate:     todoInput.DueDate,
-		UpdatedAt:   time.Now().Format(time.RFC3339),
 	})
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -98,8 +93,8 @@ func (t TodoService) UpdateTodo(todoID int, todoInput dto.TodoInputDto) (dto.Tod
 		Title:       updatedTodo.Title,
 		Description: updatedTodo.Description,
 		DueDate:     updatedTodo.DueDate,
-		CreatedAt:   updatedTodo.CreatedAt,
-		UpdatedAt:   updatedTodo.UpdatedAt,
+		CreatedAt:   updatedTodo.CreatedAt.Format(time.RFC3339),
+		UpdatedAt:   updatedTodo.UpdatedAt.Format(time.RFC3339),
 	}, nil
 }
 
@@ -124,8 +119,8 @@ func (t TodoService) makeTodosResponseDto(todos []database.Todo) []dto.TodoRespo
 			Title:       todo.Title,
 			Description: todo.Description,
 			DueDate:     todo.DueDate,
-			CreatedAt:   todo.CreatedAt,
-			UpdatedAt:   todo.UpdatedAt,
+			CreatedAt:   todo.CreatedAt.Format(time.RFC3339),
+			UpdatedAt:   todo.UpdatedAt.Format(time.RFC3339),
 		}
 	}
 	return todosResponseDto

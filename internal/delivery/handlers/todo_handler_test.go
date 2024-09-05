@@ -54,21 +54,19 @@ func TestCreateTodoHandler(t *testing.T) {
 				UpdatedAt:   "2024-09-05T12:24:16+07:00",
 			},
 			mockBehavior: func(ctx context.Context, repo *mock_repo.MockRepository) {
+				createdUpdatedAt, _ := time.Parse(time.RFC3339, "2024-09-05T12:24:16+07:00")
 				newTodo := database.Todo{
 					ID:          1,
 					Title:       "test",
 					Description: "test",
 					DueDate:     "2024-09-05T12:40:16+07:00",
-					CreatedAt:   "2024-09-05T12:24:16+07:00",
-					UpdatedAt:   "2024-09-05T12:24:16+07:00",
+					CreatedAt:   createdUpdatedAt,
+					UpdatedAt:   createdUpdatedAt,
 				}
-				createdAndUpdatedAt := time.Now().Format(time.RFC3339)
 				repo.EXPECT().CreateTodo(ctx, database.CreateTodoParams{
 					Title:       "test",
 					Description: "test",
 					DueDate:     "2024-09-05T12:40:16+07:00",
-					CreatedAt:   createdAndUpdatedAt,
-					UpdatedAt:   createdAndUpdatedAt,
 				}).Return(newTodo, nil).Times(1)
 			},
 		},
@@ -121,13 +119,10 @@ func TestCreateTodoHandler(t *testing.T) {
 				Error: errCreatingTodo,
 			},
 			mockBehavior: func(ctx context.Context, repo *mock_repo.MockRepository) {
-				createdUpdatedAt := time.Now().Format(time.RFC3339)
 				repo.EXPECT().CreateTodo(ctx, database.CreateTodoParams{
 					Title:       "test",
 					Description: "test",
 					DueDate:     "2024-09-05T12:40:16+07:00",
-					CreatedAt:   createdUpdatedAt,
-					UpdatedAt:   createdUpdatedAt,
 				}).Return(database.Todo{}, errors.New("some db error")).Times(1)
 			},
 		},
@@ -150,14 +145,15 @@ func TestCreateTodoHandler(t *testing.T) {
 				},
 			},
 			mockBehavior: func(ctx context.Context, repo *mock_repo.MockRepository) {
+				createdUpdatedAt, _ := time.Parse(time.RFC3339, "2024-09-05T12:24:16+07:00")
 				todos := []database.Todo{
 					{
 						ID:          1,
 						Title:       "test",
 						Description: "test",
 						DueDate:     "2024-09-05T12:40:16+07:00",
-						CreatedAt:   "2024-09-05T12:24:16+07:00",
-						UpdatedAt:   "2024-09-05T12:24:16+07:00",
+						CreatedAt:   createdUpdatedAt,
+						UpdatedAt:   createdUpdatedAt,
 					},
 				}
 				repo.EXPECT().GetTodos(ctx).Return(todos, nil).Times(1)
@@ -195,13 +191,14 @@ func TestCreateTodoHandler(t *testing.T) {
 				UpdatedAt:   "2024-09-05T12:24:16+07:00",
 			},
 			mockBehavior: func(ctx context.Context, repo *mock_repo.MockRepository) {
+				createdUpdatedAt, _ := time.Parse(time.RFC3339, "2024-09-05T12:24:16+07:00")
 				todo := database.Todo{
 					ID:          1,
 					Title:       "test",
 					Description: "test",
 					DueDate:     "2024-09-05T12:40:16+07:00",
-					CreatedAt:   "2024-09-05T12:24:16+07:00",
-					UpdatedAt:   "2024-09-05T12:24:16+07:00",
+					CreatedAt:   createdUpdatedAt,
+					UpdatedAt:   createdUpdatedAt,
 				}
 				todoID := int32(1)
 				repo.EXPECT().GetTodo(ctx, todoID).Return(todo, nil).Times(1)
@@ -286,22 +283,21 @@ func TestCreateTodoHandler(t *testing.T) {
 				UpdatedAt:   "2024-09-05T12:24:16+07:00",
 			},
 			mockBehavior: func(ctx context.Context, repo *mock_repo.MockRepository) {
+				createdUpdatedAt, _ := time.Parse(time.RFC3339, "2024-09-05T12:24:16+07:00")
 				todo := database.Todo{
 					ID:          1,
 					Title:       "test",
 					Description: "test",
 					DueDate:     "2024-09-05T12:40:16+07:00",
-					CreatedAt:   "2024-09-05T12:24:16+07:00",
-					UpdatedAt:   "2024-09-05T12:24:16+07:00",
+					CreatedAt:   createdUpdatedAt,
+					UpdatedAt:   createdUpdatedAt,
 				}
-				updatedAt := time.Now().Format(time.RFC3339)
 				todoID := int32(1)
 				repo.EXPECT().UpdateTodo(ctx, database.UpdateTodoParams{
 					ID:          todoID,
 					Title:       "test",
 					Description: "test",
 					DueDate:     "2024-09-05T12:40:16+07:00",
-					UpdatedAt:   updatedAt,
 				}).Return(todo, nil).Times(1)
 			},
 		},
@@ -388,14 +384,12 @@ func TestCreateTodoHandler(t *testing.T) {
 				Error: errTodoNotFound,
 			},
 			mockBehavior: func(ctx context.Context, repo *mock_repo.MockRepository) {
-				updated := time.Now().Format(time.RFC3339)
 				todoID := int32(11)
 				repo.EXPECT().UpdateTodo(ctx, database.UpdateTodoParams{
 					ID:          todoID,
 					Title:       "test",
 					Description: "test",
 					DueDate:     "2024-09-05T12:40:16+07:00",
-					UpdatedAt:   updated,
 				}).Return(database.Todo{}, sql.ErrNoRows).Times(1)
 			},
 		},
@@ -416,13 +410,11 @@ func TestCreateTodoHandler(t *testing.T) {
 			},
 			mockBehavior: func(ctx context.Context, repo *mock_repo.MockRepository) {
 				todoID := int32(1)
-				updatedAt := time.Now().Format(time.RFC3339)
 				repo.EXPECT().UpdateTodo(ctx, database.UpdateTodoParams{
 					ID:          todoID,
 					Title:       "test",
 					Description: "test",
 					DueDate:     "2024-09-05T12:40:16+07:00",
-					UpdatedAt:   updatedAt,
 				}).Return(database.Todo{}, errors.New("some db error")).Times(1)
 			},
 		},

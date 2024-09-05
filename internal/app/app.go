@@ -11,11 +11,13 @@ import (
 	"to-do-list-go/internal/database"
 	"to-do-list-go/internal/delivery/handlers"
 	"to-do-list-go/internal/service"
+	"to-do-list-go/internal/validator"
 )
 
 const (
 	errLoadingConfig  = "error loading config"
 	errConnectingToDB = "error connecting to db"
+	errValidatorInit  = "error validator init"
 
 	successfulConfigLoad   = "config has been loaded successfully"
 	successfulDBConnection = "successful connection to db"
@@ -40,8 +42,13 @@ func Run() {
 
 	s := service.NewService(repo)
 
+	v, err := validator.InitValidator()
+	if err != nil {
+		log.Fatalf(errValidatorInit+": %s\n", err)
+	}
+
 	r := chi.NewRouter()
-	h := handlers.NewHandler(s)
+	h := handlers.NewHandler(s, v)
 	h.RegisterRoutes(r)
 
 	log.Printf(serverStart+" %s", cfg.Port)

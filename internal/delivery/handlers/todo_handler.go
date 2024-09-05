@@ -1,12 +1,9 @@
 package handlers
 
 import (
-	"encoding/json"
-	"github.com/go-chi/chi"
 	"github.com/go-playground/validator/v10"
 	"log"
 	"net/http"
-	"strconv"
 	"strings"
 	"to-do-list-go/internal/delivery"
 	"to-do-list-go/internal/delivery/dto"
@@ -27,18 +24,7 @@ func newTodoHandler(todoService service.Todo, validator *validator.Validate) *To
 }
 
 func (h TodoHandler) createTodoHandler(w http.ResponseWriter, r *http.Request) {
-	todoInput := dto.TodoInputDto{}
-	if err := json.NewDecoder(r.Body).Decode(&todoInput); err != nil {
-		log.Printf(domain.ErrInvalidInput+": %s\n", err)
-		delivery.RespondWithError(w, http.StatusBadRequest, domain.ErrInvalidInput)
-		return
-	}
-
-	if err := h.validator.Struct(&todoInput); err != nil {
-		log.Printf(domain.ErrInvalidInput+": %s\n", err)
-		delivery.RespondWithError(w, http.StatusBadRequest, domain.ErrInvalidInput)
-		return
-	}
+	todoInput := r.Context().Value("todoInput").(dto.TodoInputDto)
 
 	todo, err := h.todoService.CreateTodo(todoInput)
 	if err != nil {
@@ -62,13 +48,7 @@ func (h TodoHandler) getTodosHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h TodoHandler) getTodoHandler(w http.ResponseWriter, r *http.Request) {
-	todoIDStr := chi.URLParam(r, "id")
-	todoID, err := strconv.Atoi(todoIDStr)
-	if err != nil || todoID <= 0 {
-		log.Printf(domain.ErrInvalidTodoID+":%s\n", err)
-		delivery.RespondWithError(w, http.StatusBadRequest, domain.ErrInvalidTodoID)
-		return
-	}
+	todoID := r.Context().Value("todoID").(int)
 
 	todo, err := h.todoService.GetTodo(todoID)
 	if err != nil {
@@ -87,26 +67,9 @@ func (h TodoHandler) getTodoHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h TodoHandler) updateTodoHandler(w http.ResponseWriter, r *http.Request) {
-	todoIDStr := chi.URLParam(r, "id")
-	todoID, err := strconv.Atoi(todoIDStr)
-	if err != nil || todoID <= 0 {
-		log.Printf(domain.ErrInvalidTodoID+":%s\n", err)
-		delivery.RespondWithError(w, http.StatusBadRequest, domain.ErrInvalidTodoID)
-		return
-	}
+	todoID := r.Context().Value("todoID").(int)
 
-	todoInput := dto.TodoInputDto{}
-	if err := json.NewDecoder(r.Body).Decode(&todoInput); err != nil {
-		log.Printf(domain.ErrInvalidInput+": %s\n", err)
-		delivery.RespondWithError(w, http.StatusBadRequest, domain.ErrInvalidInput)
-		return
-	}
-
-	if err := h.validator.Struct(&todoInput); err != nil {
-		log.Printf(domain.ErrInvalidInput+": %s\n", err)
-		delivery.RespondWithError(w, http.StatusBadRequest, domain.ErrInvalidInput)
-		return
-	}
+	todoInput := r.Context().Value("todoInput").(dto.TodoInputDto)
 
 	updatedTodo, err := h.todoService.UpdateTodo(todoID, todoInput)
 	if err != nil {
@@ -125,13 +88,7 @@ func (h TodoHandler) updateTodoHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h TodoHandler) deleteTodoHandler(w http.ResponseWriter, r *http.Request) {
-	todoIDStr := chi.URLParam(r, "id")
-	todoID, err := strconv.Atoi(todoIDStr)
-	if err != nil || todoID <= 0 {
-		log.Printf(domain.ErrInvalidTodoID+":%s\n", err)
-		delivery.RespondWithError(w, http.StatusBadRequest, domain.ErrInvalidTodoID)
-		return
-	}
+	todoID := r.Context().Value("todoID").(int)
 
 	if err := h.todoService.DeleteTodo(todoID); err != nil {
 		if strings.HasPrefix(err.Error(), domain.ErrTodoNotFound) {

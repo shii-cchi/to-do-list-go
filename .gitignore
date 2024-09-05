@@ -1,3 +1,4 @@
 .env
 .idea
 todo_server
+coverage.html

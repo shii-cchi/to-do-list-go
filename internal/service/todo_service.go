@@ -7,7 +7,10 @@ import (
 	"time"
 	"to-do-list-go/internal/database"
 	"to-do-list-go/internal/delivery/dto"
-	"to-do-list-go/internal/domain"
+)
+
+const (
+	ErrTodoNotFound = "todo with this id not found"
 )
 
 type TodoService struct {
@@ -57,7 +60,7 @@ func (t TodoService) GetTodo(todoID int) (dto.TodoResponseDto, error) {
 	todo, err := t.repo.GetTodo(context.Background(), int32(todoID))
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return dto.TodoResponseDto{}, fmt.Errorf(domain.ErrTodoNotFound+": %s\n", err)
+			return dto.TodoResponseDto{}, fmt.Errorf(ErrTodoNotFound+": %s\n", err)
 		}
 
 		return dto.TodoResponseDto{}, err
@@ -83,7 +86,7 @@ func (t TodoService) UpdateTodo(todoID int, todoInput dto.TodoInputDto) (dto.Tod
 	})
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return dto.TodoResponseDto{}, fmt.Errorf(domain.ErrTodoNotFound+": %s\n", err)
+			return dto.TodoResponseDto{}, fmt.Errorf(ErrTodoNotFound+": %s\n", err)
 		}
 
 		return dto.TodoResponseDto{}, err
@@ -103,7 +106,7 @@ func (t TodoService) DeleteTodo(todoID int) error {
 	_, err := t.repo.DeleteTodo(context.Background(), int32(todoID))
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return fmt.Errorf(domain.ErrTodoNotFound+": %s\n", err)
+			return fmt.Errorf(ErrTodoNotFound+": %s\n", err)
 		}
 
 		return err

@@ -10,7 +10,11 @@ import (
 	"strconv"
 	"to-do-list-go/internal/delivery"
 	"to-do-list-go/internal/delivery/dto"
-	"to-do-list-go/internal/domain"
+)
+
+const (
+	ErrInvalidInput  = "invalid todo input body(fields title, description and due_date are required and can't be empty, due_date field must be a string in RFC3339 format)"
+	ErrInvalidTodoID = "invalid todo id"
 )
 
 func CheckTodoInput(validate *validator.Validate) func(next http.Handler) http.Handler {
@@ -18,14 +22,14 @@ func CheckTodoInput(validate *validator.Validate) func(next http.Handler) http.H
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			todoInput := dto.TodoInputDto{}
 			if err := json.NewDecoder(r.Body).Decode(&todoInput); err != nil {
-				log.Printf(domain.ErrInvalidInput+": %s\n", err)
-				delivery.RespondWithError(w, http.StatusBadRequest, domain.ErrInvalidInput)
+				log.Printf(ErrInvalidInput+": %s\n", err)
+				delivery.RespondWithError(w, http.StatusBadRequest, ErrInvalidInput)
 				return
 			}
 
 			if err := validate.Struct(&todoInput); err != nil {
-				log.Printf(domain.ErrInvalidInput+": %s\n", err)
-				delivery.RespondWithError(w, http.StatusBadRequest, domain.ErrInvalidInput)
+				log.Printf(ErrInvalidInput+": %s\n", err)
+				delivery.RespondWithError(w, http.StatusBadRequest, ErrInvalidInput)
 				return
 			}
 
@@ -41,12 +45,12 @@ func GetTodoID(next http.Handler) http.Handler {
 		todoID, err := strconv.Atoi(todoIDStr)
 		if err != nil || todoID <= 0 {
 			if err != nil {
-				log.Printf(domain.ErrInvalidTodoID+": %s\n", err)
+				log.Printf(ErrInvalidTodoID+": %s\n", err)
 			} else {
-				log.Printf(domain.ErrInvalidTodoID+": %d\n", todoID)
+				log.Printf(ErrInvalidTodoID+": %d\n", todoID)
 			}
 
-			delivery.RespondWithError(w, http.StatusBadRequest, domain.ErrInvalidTodoID)
+			delivery.RespondWithError(w, http.StatusBadRequest, ErrInvalidTodoID)
 			return
 		}
 

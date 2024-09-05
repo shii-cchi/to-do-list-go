@@ -11,12 +11,12 @@ import (
 )
 
 const (
-	ErrCreatingTodo = "error creating todo"
-	ErrGettingTodos = "error getting todos"
-	ErrTodoNotFound = "todo with this id not found"
-	ErrGettingTodo  = "error getting todo"
-	ErrUpdatingTodo = "error updating todo"
-	ErrDeletingTodo = "error deleting todo"
+	errCreatingTodo = "error creating todo"
+	errGettingTodos = "error getting todos"
+	errTodoNotFound = "todo with this id not found"
+	errGettingTodo  = "error getting todo"
+	errUpdatingTodo = "error updating todo"
+	errDeletingTodo = "error deleting todo"
 )
 
 type TodoHandler struct {
@@ -36,8 +36,8 @@ func (h TodoHandler) createTodoHandler(w http.ResponseWriter, r *http.Request) {
 
 	todo, err := h.todoService.CreateTodo(todoInput)
 	if err != nil {
-		log.Printf(ErrCreatingTodo+": %s\n", err)
-		delivery.RespondWithError(w, http.StatusInternalServerError, ErrCreatingTodo)
+		log.Printf(errCreatingTodo+": %s\n", err)
+		delivery.RespondWithError(w, http.StatusInternalServerError, errCreatingTodo)
 		return
 	}
 
@@ -47,8 +47,8 @@ func (h TodoHandler) createTodoHandler(w http.ResponseWriter, r *http.Request) {
 func (h TodoHandler) getTodosHandler(w http.ResponseWriter, r *http.Request) {
 	todos, err := h.todoService.GetTodos()
 	if err != nil {
-		log.Printf(ErrGettingTodos+": %s\n", err)
-		delivery.RespondWithError(w, http.StatusInternalServerError, ErrGettingTodos)
+		log.Printf(errGettingTodos+": %s\n", err)
+		delivery.RespondWithError(w, http.StatusInternalServerError, errGettingTodos)
 		return
 	}
 
@@ -60,14 +60,14 @@ func (h TodoHandler) getTodoHandler(w http.ResponseWriter, r *http.Request) {
 
 	todo, err := h.todoService.GetTodo(todoID)
 	if err != nil {
-		if strings.HasPrefix(err.Error(), ErrTodoNotFound) {
+		if strings.HasPrefix(err.Error(), errTodoNotFound) {
 			log.Println(err)
-			delivery.RespondWithError(w, http.StatusNotFound, ErrTodoNotFound)
+			delivery.RespondWithError(w, http.StatusNotFound, errTodoNotFound)
 			return
 		}
 
-		log.Printf(ErrGettingTodo+": %s\n", err)
-		delivery.RespondWithError(w, http.StatusInternalServerError, ErrGettingTodo)
+		log.Printf(errGettingTodo+": %s\n", err)
+		delivery.RespondWithError(w, http.StatusInternalServerError, errGettingTodo)
 		return
 	}
 
@@ -81,14 +81,14 @@ func (h TodoHandler) updateTodoHandler(w http.ResponseWriter, r *http.Request) {
 
 	updatedTodo, err := h.todoService.UpdateTodo(todoID, todoInput)
 	if err != nil {
-		if strings.HasPrefix(err.Error(), ErrTodoNotFound) {
+		if strings.HasPrefix(err.Error(), errTodoNotFound) {
 			log.Println(err)
-			delivery.RespondWithError(w, http.StatusNotFound, ErrTodoNotFound)
+			delivery.RespondWithError(w, http.StatusNotFound, errTodoNotFound)
 			return
 		}
 
-		log.Printf(ErrUpdatingTodo+": %s\n", err)
-		delivery.RespondWithError(w, http.StatusInternalServerError, ErrUpdatingTodo)
+		log.Printf(errUpdatingTodo+": %s\n", err)
+		delivery.RespondWithError(w, http.StatusInternalServerError, errUpdatingTodo)
 		return
 	}
 
@@ -99,14 +99,14 @@ func (h TodoHandler) deleteTodoHandler(w http.ResponseWriter, r *http.Request) {
 	todoID := r.Context().Value("todoID").(int)
 
 	if err := h.todoService.DeleteTodo(todoID); err != nil {
-		if strings.HasPrefix(err.Error(), ErrTodoNotFound) {
+		if strings.HasPrefix(err.Error(), errTodoNotFound) {
 			log.Println(err)
-			delivery.RespondWithError(w, http.StatusNotFound, ErrTodoNotFound)
+			delivery.RespondWithError(w, http.StatusNotFound, errTodoNotFound)
 			return
 		}
 
-		log.Printf(ErrDeletingTodo+": %s\n", err)
-		delivery.RespondWithError(w, http.StatusInternalServerError, ErrDeletingTodo)
+		log.Printf(errDeletingTodo+": %s\n", err)
+		delivery.RespondWithError(w, http.StatusInternalServerError, errDeletingTodo)
 		return
 	}
 

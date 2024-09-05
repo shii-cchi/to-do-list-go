@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"time"
 	"to-do-list-go/internal/database"
@@ -59,7 +60,7 @@ func (t TodoService) GetTodos() ([]dto.TodoResponseDto, error) {
 func (t TodoService) GetTodo(todoID int) (dto.TodoResponseDto, error) {
 	todo, err := t.repo.GetTodo(context.Background(), int32(todoID))
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, sql.ErrNoRows) {
 			return dto.TodoResponseDto{}, fmt.Errorf(ErrTodoNotFound+": %s\n", err)
 		}
 
@@ -85,7 +86,7 @@ func (t TodoService) UpdateTodo(todoID int, todoInput dto.TodoInputDto) (dto.Tod
 		UpdatedAt:   time.Now().Format(time.RFC3339),
 	})
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, sql.ErrNoRows) {
 			return dto.TodoResponseDto{}, fmt.Errorf(ErrTodoNotFound+": %s\n", err)
 		}
 
@@ -105,7 +106,7 @@ func (t TodoService) UpdateTodo(todoID int, todoInput dto.TodoInputDto) (dto.Tod
 func (t TodoService) DeleteTodo(todoID int) error {
 	_, err := t.repo.DeleteTodo(context.Background(), int32(todoID))
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, sql.ErrNoRows) {
 			return fmt.Errorf(ErrTodoNotFound+": %s\n", err)
 		}
 

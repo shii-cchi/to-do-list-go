@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	ErrUndefinedEnvParam = "parameter is undefined"
+	errUndefinedEnvParam = "parameter is undefined"
 )
 
 type Config struct {
@@ -27,37 +27,37 @@ func LoadConfig() (*Config, error) {
 	port := os.Getenv("PORT")
 
 	if port == "" {
-		return nil, errors.New("PORT " + ErrUndefinedEnvParam)
+		return nil, errors.New("PORT " + errUndefinedEnvParam)
 	}
 
 	dbUser := os.Getenv("DB_USER")
 
 	if dbUser == "" {
-		return nil, errors.New("DB_USER " + ErrUndefinedEnvParam)
+		return nil, errors.New("DB_USER " + errUndefinedEnvParam)
 	}
 
 	dbPassword := os.Getenv("DB_PASSWORD")
 
 	if dbPassword == "" {
-		return nil, errors.New("DB_PASSWORD " + ErrUndefinedEnvParam)
+		return nil, errors.New("DB_PASSWORD " + errUndefinedEnvParam)
 	}
 
 	dbHost := os.Getenv("DB_HOST")
 
 	if dbHost == "" {
-		return nil, errors.New("DB_HOST " + ErrUndefinedEnvParam)
+		return nil, errors.New("DB_HOST " + errUndefinedEnvParam)
 	}
 
 	dbPort := os.Getenv("DB_PORT")
 
 	if dbPort == "" {
-		return nil, errors.New("DB_PORT " + ErrUndefinedEnvParam)
+		return nil, errors.New("DB_PORT " + errUndefinedEnvParam)
 	}
 
 	dbName := os.Getenv("DB_NAME")
 
 	if dbName == "" {
-		return nil, errors.New("DB_NAME " + ErrUndefinedEnvParam)
+		return nil, errors.New("DB_NAME " + errUndefinedEnvParam)
 	}
 
 	return &Config{

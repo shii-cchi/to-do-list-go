@@ -16,4 +16,6 @@ const (
 	ErrGettingTodo  = "error getting todo"
 	ErrUpdatingTodo = "error updating todo"
 	ErrDeletingTodo = "error deleting todo"
+
+	ErrMarshalingJSON = "failed to marshal JSON response"
 )

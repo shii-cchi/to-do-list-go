@@ -68,7 +68,6 @@ func (h TodoHandler) getTodoHandler(w http.ResponseWriter, r *http.Request) {
 
 func (h TodoHandler) updateTodoHandler(w http.ResponseWriter, r *http.Request) {
 	todoID := r.Context().Value(delivery.TodoIDKey).(int)
-
 	todoInput := r.Context().Value(delivery.TodoInputKey).(dto.TodoInputDto)
 
 	updatedTodo, err := h.todoService.UpdateTodo(todoID, todoInput)

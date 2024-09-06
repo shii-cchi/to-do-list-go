@@ -1,4 +1,4 @@
-.PHONY: build run migration migration_down sqlc test test100 cover gen clean
+.PHONY: build run style modules migration migration_down sqlc test test100 cover gen clean
 .DEFAULT_GOAL := run
 
 include .env
@@ -6,12 +6,15 @@ include .env
 build:
 	go build -o todo_server cmd/main.go
 
-run: build
+run: modules build migration
 	./todo_server
 
 style:
 	gofmt -l .
 	golint ./...
+
+modules:
+	go mod tidy
 
 migration:
 	cd ./internal/database/migrations && goose postgres postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=disable up
